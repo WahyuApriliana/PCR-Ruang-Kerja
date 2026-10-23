@@ -34,6 +34,31 @@ def test_stream_and_prompt(monkeypatch):
     assert '"content": "Halo"' in result.text
     assert '"type": "done"' in result.text
 
+def test_image_message_forwarded_to_vlm(monkeypatch):
+    import json
+    image_message = {
+        'role':'user',
+        'content':[
+            {'type':'text','text':'Apa isi gambar ini?'},
+            {'type':'image_url','image_url':{'url':'data:image/png;base64,iVBORw0KGgo='}},
+        ],
+    }
+    def handler(request):
+        data=json.loads(request.content)
+        assert data['messages'][-1] == image_message
+        return httpx.Response(200,text='data: {"choices":[{"delta":{"content":"Gambar"}}]}\n\ndata: [DONE]\n\n')
+    mock_lm(monkeypatch,handler)
+    result=client.post('/api/chat',json={**PAYLOAD,'messages':[image_message]})
+    assert result.status_code == 200
+    assert '"content": "Gambar"' in result.text
+
+def test_invalid_image_message():
+    for image_url in ['data:image/svg+xml;base64,aGk=', 'data:image/png;base64,not-base64']:
+        content=[{'type':'image_url','image_url':{'url':image_url}}]
+        assert client.post('/api/chat',json={**PAYLOAD,'messages':[{'role':'user','content':content}]}).status_code == 422
+    too_many_images=[{'type':'image_url','image_url':{'url':'data:image/png;base64,iVBORw0KGgo='}} for _ in range(5)]
+    assert client.post('/api/chat',json={**PAYLOAD,'messages':[{'role':'user','content':too_many_images}]}).status_code == 422
+
 def test_connection_failure(monkeypatch):
     def handler(request):
         raise httpx.ConnectError('offline',request=request)

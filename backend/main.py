@@ -14,7 +14,7 @@ app.add_middleware(CORSMiddleware, allow_origins=[settings.frontend_origin], all
 
 @app.exception_handler(RequestValidationError)
 async def validation_error(request, exc):
-    return JSONResponse(status_code=422, content={'detail':'Pesan tidak valid. Maksimal 4000 karakter per pesan pengguna, 30 pesan dan 60000 karakter riwayat.'})
+    return JSONResponse(status_code=422, content={'detail':'Pesan tidak valid. Maksimal 4000 karakter per pesan pengguna, 30 pesan, 60000 karakter riwayat, 4 gambar per pesan, 5 MB per gambar, dan 20 MB gambar per riwayat.'})
 
 @app.get('/api/health')
 async def health():

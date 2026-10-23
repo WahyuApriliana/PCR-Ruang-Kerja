@@ -117,6 +117,7 @@ Buka http://localhost:8000. Container menyajikan frontend dan FastAPI sekaligus.
 - Klik karakter, label nama, atau kartu pekerja di kiri untuk memusatkan kamera dan membuka chat.
 - Rina membantu proposal; Melati keuangan; Arief pengembangan; Dewi media sosial; Hendra pengujian web.
 - Enter mengirim pesan; Shift+Enter membuat baris baru. Maksimal pesan pengguna 4000 karakter.
+- Gunakan tombol **＋ Gambar** untuk melampirkan PNG, JPEG, atau WEBP ke chat VLM. Maksimal 4 gambar per pesan dan 5 MB per gambar; model yang dimuat di LM Studio harus mendukung input gambar.
 - Jawaban muncul bertahap, tangan/kepala bergerak saat berpikir, status berubah ketika selesai.
 - Pindah pekerja tanpa kehilangan chat selama sesi. Pengiriman paralel ke pekerja lain didukung; LM Studio dapat mengantrekannya.
 - Hapus chat mengosongkan riwayat pekerja aktif. Tidak tersedia saat respons sedang berlangsung.
@@ -124,7 +125,7 @@ Buka http://localhost:8000. Container menyajikan frontend dan FastAPI sekaligus.
 
 ## 8. API dan batasan
 
-GET /api/health mengembalikan status backend, kesiapan identifier model dan nama model. GET /api/workers mengembalikan data visual lima pekerja. POST /api/chat menerima worker_id dan messages dengan role user/assistant. Maksimal 30 pesan, 60000 karakter total, 12000 karakter per pesan assistant. Prompt sistem ditambahkan di server. Streaming memakai data JSON dengan type token/content, done, atau error/message. Timeout koneksi 5 detik dan baca respons 90 detik. API docs tersedia di /docs.
+GET /api/health mengembalikan status backend, kesiapan identifier model dan nama model. GET /api/workers mengembalikan data visual lima pekerja. POST /api/chat menerima worker_id dan messages dengan role user/assistant. Pesan pengguna dapat berisi teks dan lampiran gambar dalam format OpenAI-compatible `image_url` data URL (PNG/JPEG/WEBP). Maksimal 4 gambar per pesan, 5 MB per gambar, 20 MB gambar per riwayat, 30 pesan, 60000 karakter total, dan 12000 karakter per pesan assistant. Prompt sistem ditambahkan di server. Streaming memakai data JSON dengan type token/content, done, atau error/message. Timeout koneksi 5 detik dan baca respons 90 detik. API docs tersedia di /docs.
 
 ## 9. Pengujian
 
